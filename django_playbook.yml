@@ -1,0 +1,13 @@
+---
+- hosts: django
+  become: true
+  vars_files:
+    - staging/group_vars/all/vars.yml
+    - staging/group_vars/all/encrypted_vars.yml
+
+  roles:
+    - preinstall
+    - nginx
+    - postgresql
+    - django
+    - gunicorn

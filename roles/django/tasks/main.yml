@@ -1,0 +1,80 @@
+---
+- name: Creates directory
+  file:
+    path: "{{ django.project_name_path }}"
+    state: directory
+  tags:
+  - django
+  - django::install
+
+#- name: Install virtualenv
+#  command: 'ln -s /usr/bin/virtualenv3 /usr/bin/virtualenv'
+#  when: not '/usr/bin/virtualenv'
+#  tags:
+#  - django
+#  - django::install
+
+
+- name: Install Django Framework
+  pip:
+     name: Django==2.1.*
+     virtualenv: "{{ django.project_name_path }}/env"
+     virtualenv_command: virtualenv-3
+     virtualenv_python: python3
+
+  tags:
+  - django
+  - django::install
+
+- name: Instal python library for PSQL
+  pip:
+     name: psycopg2
+     virtualenv: "{{ django.project_name_path }}/env"
+     virtualenv_command: virtualenv-3
+     virtualenv_python: python3
+  when: not 'Requirement already satisfied'
+  tags:
+  - django
+  - django::install
+
+- name: Install a django project
+  command: "{{ django.project_name_path }}/env/bin/django-admin.py startproject {{ django.project_name }} chdir={{ django.project_name_path }}/"
+  when: not 'already exists'
+  tags:
+  - django
+  - django::install
+
+- name: Create Settings File for Django
+  template:
+    src: settings.py.j2
+    dest: "{{ django.project_name_path }}/{{ django.project_name }}/settings.py"
+  tags:
+  - django
+  - django::install
+
+- name: Make migrations
+  shell: "{{ django.project_name_path }}/env/bin/python3 {{ django.project_name_path }}/{{ django.project_name }}/manage.py makemigrations"
+  tags:
+  - django
+  - django::install
+
+- name: Migrate database
+  django_manage:
+    app_path: "{{ django.project_name_path }}/{{ django.project_name }}"
+    command: migrate
+    virtualenv: "{{ django.project_name_path }}/env"
+  tags:
+  - django
+  - django::install
+
+- name: Get all static files
+  django_manage:
+    app_path: "{{ django.project_name_path }}/{{ django.project_name }}"
+    command: collectstatic
+    virtualenv: "{{ django.project_name_path }}/env"
+  tags:
+  - django
+  - django::install
+# Последний таск выполнялся с ошибкой из-за неуказанной перменной в файле настроек джанго
+#Внести переменную STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+#/usr/share/nginx/djangoproject/djgb/djgb/settings.py

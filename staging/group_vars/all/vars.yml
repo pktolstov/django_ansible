@@ -1,0 +1,10 @@
+---
+ansible_python_interpreter: '/usr/bin/python3'
+nginx:
+  root_dir: '/usr/share/nginx/vhosts'
+  hostname: django.domain.local
+  domain: djdomain
+
+django:
+  project_name_path: '/usr/share/nginx/djangoproject'
+  project_name: 'djgb'

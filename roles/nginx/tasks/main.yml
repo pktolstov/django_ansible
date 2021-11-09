@@ -1,0 +1,14 @@
+---
+
+- name: 'INSTALL | install nginx'
+  import_tasks: 'install.yml'
+  tags: ['nginx', 'nginx::install', 'django::nginx']
+
+- name: 'CONFIG | config nginx'
+  import_tasks: 'config.yml'
+  tags: ['nginx', 'nginx::config', 'django::nginx']
+
+
+
+
+
